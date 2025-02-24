@@ -81,7 +81,7 @@ class InvalidAuthHttp(UnauthorizedHttp):
     """
 
     def __init__(self, detail: str) -> None:
-        super().__init__(detail)
+        super().__init__(detail)  # pragma: no cover
 
 
 class InvalidAuthWebSocket(UnauthorizedWebSocket):
@@ -90,7 +90,7 @@ class InvalidAuthWebSocket(UnauthorizedWebSocket):
     """
 
     def __init__(self, detail: str) -> None:
-        super().__init__(detail)
+        super().__init__(detail)  # pragma: no cover
 
 
 #  --- end backwards-compatible code ---
