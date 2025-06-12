@@ -6,6 +6,7 @@ import jwt
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2AuthorizationCodeBearer, SecurityScopes
 from fastapi.security.base import SecurityBase
+from httpx._types import ProxyTypes
 from jwt.exceptions import (
     ExpiredSignatureError,
     ImmatureSignatureError,
@@ -15,7 +16,6 @@ from jwt.exceptions import (
     InvalidTokenError,
     MissingRequiredClaimError,
 )
-from httpx._types import ProxyTypes
 from starlette.requests import HTTPConnection
 
 from fastapi_azure_auth.exceptions import (
@@ -121,7 +121,7 @@ class AzureAuthorizationCodeBearerBase(SecurityBase):
             multi_tenant=self.multi_tenant,
             app_id=app_client_id if openid_config_use_app_id else None,
             config_url=openid_config_url or None,
-            proxy=proxy
+            proxy=proxy,
         )
 
         self.leeway: int = leeway
@@ -348,7 +348,7 @@ class SingleTenantAzureAuthorizationCodeBearer(AzureAuthorizationCodeBearerBase)
             openapi_authorization_url=openapi_authorization_url,
             openapi_token_url=openapi_token_url,
             openapi_description=openapi_description,
-            proxy=proxy
+            proxy=proxy,
         )
         self.scheme_name: str = 'AzureAD_PKCE_single_tenant'
 
@@ -422,7 +422,7 @@ class MultiTenantAzureAuthorizationCodeBearer(AzureAuthorizationCodeBearerBase):
             openapi_authorization_url=openapi_authorization_url,
             openapi_token_url=openapi_token_url,
             openapi_description=openapi_description,
-            proxy=proxy
+            proxy=proxy,
         )
         self.scheme_name: str = 'AzureAD_PKCE_multi_tenant'
 
@@ -492,6 +492,6 @@ class B2CMultiTenantAuthorizationCodeBearer(AzureAuthorizationCodeBearerBase):
             openapi_authorization_url=openapi_authorization_url,
             openapi_token_url=openapi_token_url,
             openapi_description=openapi_description,
-            proxy=proxy
+            proxy=proxy,
         )
         self.scheme_name: str = 'AzureAD_PKCE_B2C_multi_tenant'
