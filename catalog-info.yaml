@@ -1,7 +1,0 @@
-apiVersion: codeak.juliusbaer.com/v1alpha1
-kind: Application
-metadata:
-  name: MLOPS                # REQUIRED - one single JBAR app key
-  labels:
-    audience: company               # Optional - Intended target consumer: company (aka internal, default) or public (aka internet facing)
-spec: {}
