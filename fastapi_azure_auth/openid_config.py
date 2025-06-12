@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 import jwt
 from fastapi import HTTPException, status
 from httpx import AsyncClient
+from httpx._types import ProxyTypes
 
 if TYPE_CHECKING:  # pragma: no cover
     from jwt.algorithms import AllowedPublicKeys
@@ -19,12 +20,14 @@ class OpenIdConfig:
         multi_tenant: bool = False,
         app_id: Optional[str] = None,
         config_url: Optional[str] = None,
+        proxy: ProxyTypes | None = None,
     ) -> None:
         self.tenant_id: Optional[str] = tenant_id
         self._config_timestamp: Optional[datetime] = None
         self.multi_tenant: bool = multi_tenant
         self.app_id = app_id
         self.config_url = config_url
+        self.proxy = proxy
 
         self.authorization_endpoint: str
         self.signing_keys: dict[str, 'AllowedPublicKeys']
@@ -72,7 +75,7 @@ class OpenIdConfig:
         if self.app_id:
             config_url += f'?appid={self.app_id}'
 
-        async with AsyncClient(timeout=10) as client:
+        async with AsyncClient(timeout=10, proxy=self.proxy) as client:
             log.info('Fetching OpenID Connect config from %s', config_url)
             openid_response = await client.get(config_url)
             openid_response.raise_for_status()

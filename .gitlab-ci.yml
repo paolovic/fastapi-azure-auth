@@ -1,0 +1,72 @@
+default:
+  image:
+    name: python:3.11-slim
+
+stages:
+  - prepare
+  - test
+  - mirror-images
+  - scotty-release
+
+
+.dind:
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_CERT_PATH: "/certs/client"
+    DOCKER_DRIVER: overlay2
+  services:
+    - name: docker:20-dind
+      variables:
+        WAIT_FOR_SERVICE_TCP_PORT: '2376'
+  before_script:
+    - |
+      for i in $(seq 1 30)
+      do
+        docker info &> /dev/null && break
+        sleep 1s
+      done
+  script: []
+
+
+prepare_environment:
+  stage: prepare
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - .venv/
+  script:
+  - python -m venv .venv
+  - source .venv/bin/activate
+  - pip install --upgrade pip
+  - pip install black
+  - pip install .
+
+
+format_code:
+  stage: test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+    paths:
+    - .venv/
+  dependencies:
+  - prepare_environment
+  script:
+  - source .venv/bin/activate
+  - black fastapi_azure_auth/
+
+
+run_tests:
+  stage: test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+    paths:
+      - .venv/
+  dependencies:
+    - prepare_environment
+  script:
+    - source .venv/bin/activate
+    - echo "pytest"
