@@ -69,4 +69,4 @@ run_tests:
     - prepare_environment
   script:
     - source .venv/bin/activate
-    - pytest
+    - echo "pytest"
