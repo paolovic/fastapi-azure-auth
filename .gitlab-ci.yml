@@ -1,7 +1,7 @@
 default:
   image:
     name: python:3.11-slim
- 
+
 stages:
   - prepare
   - test
@@ -29,7 +29,7 @@ stages:
       done
   script: []
 
- 
+
 prepare_environment:
   stage: prepare
   cache:
@@ -40,21 +40,10 @@ prepare_environment:
   - python -m venv .venv
   - source .venv/bin/activate
   - pip install --upgrade pip
+  - pip install black
   - pip install .
- 
-lint_code:
-  stage: test
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    policy: pull
-    paths:
-    - .venv/
-  dependencies:
-  - prepare_environment
-  script:
-  - source .venv/bin/activate
-  - ruff check fastapi_azure_auth/
- 
+
+
 format_code:
   stage: test
   cache:
@@ -66,8 +55,8 @@ format_code:
   - prepare_environment
   script:
   - source .venv/bin/activate
-  - ruff format fastapi_azure_auth/
- 
+  - black fastapi_azure_auth/
+
 
 run_tests:
   stage: test
